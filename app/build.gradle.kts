@@ -74,16 +74,23 @@ android {
         // failure message just points at a path that no longer exists.
         textReport = true
         disable += "MissingTranslation"
-        // LintError is what lint reports when a detector itself throws, as
-        // opposed to a finding about this code. The Compose runtime 1.9 lint
-        // jar — pulled in transitively by the YouTube player's lifecycle 2.9
-        // dependency — is compiled against a newer Kotlin analysis API than
-        // AGP 8.7's lint bundles, so its detectors die with an
-        // IncompatibleClassChangeError. Disabling the individual detectors is
-        // whack-a-mole: every one of them that touches the analysis API breaks
-        // the same way. Real findings are still reported and still fail the
-        // build. Drop this once AGP is new enough to load that jar.
-        disable += "LintError"
+    }
+}
+
+// The YouTube player asks for lifecycle 2.9.4, up from the 2.6.0 the previous
+// version wanted. Left alone, Gradle takes every androidx.lifecycle artifact
+// with it, and lifecycle-runtime-compose 2.9 in turn drags Compose runtime to
+// 1.9 — whose lint jar is compiled against a newer Kotlin analysis API than
+// AGP 8.7's lint can load, so lint dies with an IncompatibleClassChangeError
+// before it reports anything. The player itself only touches Lifecycle APIs
+// that have been there since 2.0, so holding the version this project already
+// builds against costs nothing and keeps the stack the conservative one the
+// version catalogue describes.
+configurations.configureEach {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "androidx.lifecycle") {
+            useVersion(libs.versions.lifecycle.get())
+        }
     }
 }
 

@@ -13,9 +13,7 @@ targetSdk = "35"
 # AndroidX
 coreKtx = "1.15.0"
 activityCompose = "1.9.3"
-# 2.9.4 is what the YouTube player requires; pinning it here keeps the
-# catalogue honest about the stack that actually resolves.
-lifecycle = "2.9.4"
+lifecycle = "2.8.7"
 navigationCompose = "2.8.5"
 datastore = "1.1.1"
 composeBom = "2025.01.00"
