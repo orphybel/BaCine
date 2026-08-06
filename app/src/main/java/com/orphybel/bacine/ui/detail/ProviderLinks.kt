@@ -11,22 +11,29 @@ import java.net.URLEncoder
 enum class ProviderOpenResult { APP, WEB, NONE }
 
 /**
- * Opens a streaming provider on a given film — as directly as the data allows.
+ * Opens a streaming provider on a given film — as directly as the app allows.
  *
- * The honest limit: TMDB (via JustWatch) gives a provider's name and logo but
- * not that provider's own id for the film, so there is no exact "play this
- * title in Netflix" deep link to build. What works is opening the provider's
- * app on a **search for the title**, which lands on the film in almost every
- * case, using a web URL the installed app claims. When the app is absent or
- * refuses the link, we fall back to the aggregate "where to watch" page TMDB
- * did give us.
+ * Device testing set the ceiling here. TMDB (via JustWatch) gives a provider's
+ * name and logo but not that provider's own id for the film, so there is no
+ * exact "play this title in Netflix" deep link to build. And the TV apps vary:
+ * Disney+ and Max open their search screen from a search URL but do not carry
+ * the query; Netflix and Prime Video ignore the web URL entirely. So "jump
+ * straight to the film" is not reliably possible — what is, is opening the
+ * right app.
  *
- * The attempt order per provider:
- *  1. the provider's known package, aimed at its title-search URL — opens the
- *     app itself;
- *  2. the same URL with no package — another matching app, or a browser;
- *  3. the JustWatch/TMDB aggregate link;
- *  4. nothing worked.
+ * The attempt order, per provider whose app is installed:
+ *  1. the title-search URL aimed at the app — for the apps that honour it, this
+ *     lands on their search (sometimes pre-filled, sometimes not);
+ *  2. the app's own launcher — for apps that ignore the URL (Netflix, Prime),
+ *     so the user still lands in the right app rather than a stranded browser
+ *     tab.
+ *
+ * Only when the app is not installed do we fall back to the aggregate "where to
+ * watch" page, which opens in a browser.
+ *
+ * Declaring the provider packages in the manifest `<queries>` is what makes the
+ * targeting and the install check work under Android 11+ package visibility;
+ * without it the system silently fell through to a browser chooser.
  */
 fun openProvider(
     context: Context,
@@ -40,13 +47,15 @@ fun openProvider(
     if (target != null) {
         val url = Uri.parse(target.url(query))
         for (pkg in target.packages) {
+            val launcher = context.launcherIntentFor(pkg) ?: continue // not installed
+            // Prefer the search URL; some apps open their search from it.
             if (context.launch(Intent(Intent.ACTION_VIEW, url).setPackage(pkg))) {
                 return ProviderOpenResult.APP
             }
+            // Installed but it ignored the link: open the app anyway, so the
+            // user is at least in the right place rather than on a web page.
+            if (context.launch(launcher)) return ProviderOpenResult.APP
         }
-        // The app was not installed or did not claim that URL; let the system
-        // pick — could be another matching app, could be a browser.
-        if (context.launch(Intent(Intent.ACTION_VIEW, url))) return ProviderOpenResult.WEB
     }
 
     if (!justWatchLink.isNullOrBlank()) {
@@ -56,6 +65,10 @@ fun openProvider(
     }
     return ProviderOpenResult.NONE
 }
+
+/** The app's launcher intent, or null when the package is not installed. */
+private fun Context.launcherIntentFor(pkg: String): Intent? =
+    runCatching { packageManager.getLaunchIntentForPackage(pkg) }.getOrNull()
 
 /**
  * Starts [intent] if something can handle it.

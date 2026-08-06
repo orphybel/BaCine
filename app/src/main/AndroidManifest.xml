@@ -41,10 +41,28 @@
         </activity>
     </application>
 
-    <!-- Needed to resolve the YouTube app for the "open in YouTube" fallback. -->
+    <!--
+        Package visibility (Android 11+). Without naming these, the app cannot
+        target a specific provider or check whether it is installed, and every
+        "open on this provider" attempt falls through to a browser chooser.
+    -->
     <queries>
+        <!-- YouTube, for the trailer "open in YouTube" fallback. -->
         <package android:name="com.google.android.youtube" />
         <package android:name="com.google.android.youtube.tv" />
+
+        <!-- Streaming providers the detail screen can open on a film. -->
+        <package android:name="com.netflix.ninja" />
+        <package android:name="com.amazon.amazonvideo.livingroom" />
+        <package android:name="com.amazon.avod.thirdpartyclient" />
+        <package android:name="com.disney.disneyplus" />
+        <package android:name="com.wbd.stream" />
+        <package android:name="com.apple.atve.androidtv.appletv" />
+        <package android:name="com.apple.atve.amazon.appletv" />
+        <package android:name="com.cbs.ott" />
+        <package android:name="com.crunchyroll.crunchyroid" />
+
+        <!-- A browser for the "where to watch" fallback when no app is installed. -->
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
