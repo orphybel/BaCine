@@ -74,12 +74,16 @@ android {
         // failure message just points at a path that no longer exists.
         textReport = true
         disable += "MissingTranslation"
-        // Not a finding about this code: the detector itself crashes with an
-        // IncompatibleClassChangeError. It ships with Compose runtime 1.9,
-        // pulled in transitively by the YouTube player's lifecycle 2.9
-        // dependency, and is compiled against a newer Kotlin analysis API than
-        // the one bundled with AGP 8.7's lint. Drop this once AGP is upgraded.
-        disable += "FrequentlyChangingValue"
+        // LintError is what lint reports when a detector itself throws, as
+        // opposed to a finding about this code. The Compose runtime 1.9 lint
+        // jar — pulled in transitively by the YouTube player's lifecycle 2.9
+        // dependency — is compiled against a newer Kotlin analysis API than
+        // AGP 8.7's lint bundles, so its detectors die with an
+        // IncompatibleClassChangeError. Disabling the individual detectors is
+        // whack-a-mole: every one of them that touches the analysis API breaks
+        // the same way. Real findings are still reported and still fail the
+        // build. Drop this once AGP is new enough to load that jar.
+        disable += "LintError"
     }
 }
 
