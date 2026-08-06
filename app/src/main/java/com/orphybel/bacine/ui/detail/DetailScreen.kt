@@ -1,5 +1,6 @@
 package com.orphybel.bacine.ui.detail
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -50,6 +52,7 @@ import com.orphybel.bacine.ui.components.NetworkImage
 import com.orphybel.bacine.ui.components.TvButton
 import com.orphybel.bacine.ui.components.TvTag
 import com.orphybel.bacine.ui.containerViewModel
+import com.orphybel.bacine.ui.player.openInYouTube
 import com.orphybel.bacine.ui.theme.Gold
 import com.orphybel.bacine.ui.theme.Ink
 import com.orphybel.bacine.ui.theme.Surface2
@@ -99,6 +102,7 @@ private fun DetailContent(
     onPlayVideo: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val movie = details.movie
     val trailer = details.bestTrailer
     val trailerFocus = remember { FocusRequester() }
@@ -181,6 +185,24 @@ private fun DetailContent(
                                 enabled = trailer != null,
                                 focusRequester = trailerFocus,
                             )
+                            // The embedded player is the fragile part on TV
+                            // firmware. Offering the handoff up front spares
+                            // the user having to watch it fail first.
+                            if (trailer != null) {
+                                TvButton(
+                                    text = stringResource(R.string.action_watch_on_youtube),
+                                    onClick = {
+                                        if (!openInYouTube(context, trailer.key)) {
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(R.string.player_youtube_missing),
+                                                Toast.LENGTH_LONG,
+                                            ).show()
+                                        }
+                                    },
+                                    primary = false,
+                                )
+                            }
                         }
                         if (trailer == null) {
                             Text(

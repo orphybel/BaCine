@@ -100,13 +100,12 @@ private fun TrailerPlayer(
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val videoKey = target.video.key
 
     var player by remember(videoKey) { mutableStateOf<YouTubePlayer?>(null) }
     var ready by remember(videoKey) { mutableStateOf(false) }
-    var failed by remember(videoKey) { mutableStateOf(false) }
+    var failure by remember(videoKey) { mutableStateOf<PlaybackFailure?>(null) }
     var playing by remember(videoKey) { mutableStateOf(true) }
     var currentSecond by remember(videoKey) { mutableFloatStateOf(0f) }
     var duration by remember(videoKey) { mutableFloatStateOf(0f) }
@@ -123,7 +122,7 @@ private fun TrailerPlayer(
     LaunchedEffect(videoKey, ready) {
         if (!ready) {
             delay(READY_TIMEOUT_MS)
-            if (!ready) failed = true
+            if (!ready) failure = PlaybackFailure.Timeout
         }
     }
 
@@ -138,10 +137,12 @@ private fun TrailerPlayer(
         controlsVisible = false
     }
 
-    if (failed) {
+    val currentFailure = failure
+    if (currentFailure != null) {
         TrailerFallback(
             videoKey = videoKey,
             movieTitle = target.movieTitle,
+            failure = currentFailure,
             onExit = onExit,
             modifier = modifier,
         )
@@ -189,7 +190,10 @@ private fun TrailerPlayer(
                     enableAutomaticInitialization = false
                     lifecycleOwner.lifecycle.addObserver(this)
 
-                    val options = IFramePlayerOptions.Builder()
+                    // The builder takes the context so it can set the IFrame
+                    // `origin` to this app's package. Older versions claimed
+                    // https://www.youtube.com, which YouTube now rejects.
+                    val options = IFramePlayerOptions.Builder(ctx)
                         .controls(0)
                         .rel(0)
                         .build()
@@ -230,14 +234,20 @@ private fun TrailerPlayer(
                             ) {
                                 // Covers videos their owner blocked from being
                                 // embedded, which no amount of retrying fixes.
-                                failed = true
+                                failure = PlaybackFailure.Reported(error)
                             }
                         },
                         options,
                     )
                 }
             },
-            onRelease = { view -> view.release() },
+            onRelease = { view ->
+                // The observer is on the activity's lifecycle, which outlives
+                // this screen: without removing it, every trailer watched
+                // leaves a released view behind still receiving events.
+                lifecycleOwner.lifecycle.removeObserver(view)
+                view.release()
+            },
         )
 
         if (!ready) {
@@ -331,11 +341,20 @@ private fun PlayerOverlay(
 private fun TrailerFallback(
     videoKey: String,
     movieTitle: String,
+    failure: PlaybackFailure,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
+
+    // Naming the cause turns a bug report into something actionable: a blocked
+    // embed and a WebView that never woke up need different fixes.
+    val reason = when (failure) {
+        PlaybackFailure.Timeout -> stringResource(R.string.player_error_timeout)
+        is PlaybackFailure.Reported ->
+            stringResource(R.string.player_error_code, failure.error.name)
+    }
 
     LaunchedEffect(Unit) {
         runCatching { focusRequester.requestFocus() }
@@ -366,6 +385,13 @@ private fun TrailerFallback(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 12.dp),
         )
+        Text(
+            text = reason,
+            style = MaterialTheme.typography.labelMedium,
+            color = TextSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp),
+        )
         Row(
             modifier = Modifier.padding(top = 28.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
@@ -392,11 +418,24 @@ private fun TrailerFallback(
     }
 }
 
+/** Why the embedded player gave up, so the fallback screen can say which. */
+private sealed interface PlaybackFailure {
+    /** It never reported itself ready — WebView trouble, or no network. */
+    data object Timeout : PlaybackFailure
+
+    /** The IFrame player named a cause, e.g. an embed the owner disabled. */
+    data class Reported(val error: PlayerConstants.PlayerError) : PlaybackFailure
+}
+
 private fun formatTime(seconds: Float): String {
     val total = seconds.toInt().coerceAtLeast(0)
     return "%d:%02d".format(total / 60, total % 60)
 }
 
 private const val SEEK_SECONDS = 10f
-private const val READY_TIMEOUT_MS = 12_000L
+
+// Cold-starting a WebView on TV hardware is slow, and the projector is slower
+// than a phone. Waiting a while beats sending the user to the fallback for a
+// player that was merely still booting.
+private const val READY_TIMEOUT_MS = 25_000L
 private const val CONTROLS_TIMEOUT_MS = 3_500L

@@ -14,6 +14,7 @@
     <string name="row_vod">Sorties récentes en VOD</string>
     <string name="row_popular">Les plus populaires</string>
     <string name="action_watch_trailer">Bande-annonce</string>
+    <string name="action_watch_on_youtube">Voir sur YouTube</string>
     <string name="action_details">Voir la fiche</string>
 
     <!-- Catalog -->
@@ -51,6 +52,8 @@
     <string name="player_open_in_youtube">Ouvrir dans YouTube</string>
     <string name="player_error">Impossible de lire la bande-annonce ici.</string>
     <string name="player_error_hint">Le lecteur intégré n\'a pas pu démarrer. Essaie de l\'ouvrir dans l\'application YouTube.</string>
+    <string name="player_error_timeout">Cause : le lecteur n\'a pas répondu à temps.</string>
+    <string name="player_error_code">Cause : %1$s</string>
     <string name="player_hint_controls">OK : lecture/pause · ◀ ▶ : ±10 s · Retour : quitter</string>
     <string name="player_youtube_missing">Application YouTube introuvable sur cet appareil.</string>
 
