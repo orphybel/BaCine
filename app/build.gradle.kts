@@ -74,6 +74,12 @@ android {
         // failure message just points at a path that no longer exists.
         textReport = true
         disable += "MissingTranslation"
+        // Not a finding about this code: the detector itself crashes with an
+        // IncompatibleClassChangeError. It ships with Compose runtime 1.9,
+        // pulled in transitively by the YouTube player's lifecycle 2.9
+        // dependency, and is compiled against a newer Kotlin analysis API than
+        // the one bundled with AGP 8.7's lint. Drop this once AGP is upgraded.
+        disable += "FrequentlyChangingValue"
     }
 }
 
