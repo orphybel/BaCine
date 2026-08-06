@@ -82,6 +82,6 @@
     <string name="state_error">Un problème est survenu.</string>
     <string name="state_retry">Réessayer</string>
     <string name="action_back">Retour</string>
-    <string name="state_empty">Rien à afficher ici.</string>
+    <string name="state_nothing_here">Rien à afficher ici.</string>
     <string name="cd_poster">Affiche de %1$s</string>
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bacine_background">#FF06070B</color>
-    <color name="bacine_accent">#FFE8B33C</color>
     <color name="ic_launcher_background">#FF06070B</color>
 </resources>

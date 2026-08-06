@@ -82,7 +82,7 @@ fun MessageState(
 @Composable
 fun EmptyState(modifier: Modifier = Modifier, message: String? = null) {
     MessageState(
-        message = message ?: stringResource(R.string.state_empty),
+        message = message ?: stringResource(R.string.state_nothing_here),
         modifier = modifier,
     )
 }

@@ -120,7 +120,7 @@ private fun CatalogGrid(
         if (content.movies.isEmpty()) {
             item(key = "empty", span = { GridItemSpan(maxLineSpan) }) {
                 Text(
-                    text = stringResource(R.string.state_empty),
+                    text = stringResource(R.string.state_nothing_here),
                     style = MaterialTheme.typography.titleMedium,
                     color = TextPrimary,
                     modifier = Modifier.padding(vertical = 48.dp),

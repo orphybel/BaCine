@@ -71,7 +71,7 @@ private fun HomeContentList(
     modifier: Modifier = Modifier,
 ) {
     if (content.isEmpty) {
-        MessageState(message = stringResource(R.string.state_empty), modifier = modifier)
+        MessageState(message = stringResource(R.string.state_nothing_here), modifier = modifier)
         return
     }
 
