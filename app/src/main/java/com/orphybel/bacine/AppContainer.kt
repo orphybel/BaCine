@@ -39,8 +39,13 @@ class AppContainer(context: Context) {
     val imageLoader: ImageLoader by lazy { ImageLoader(httpClient) }
 
     val tmdbClient: TmdbClient by lazy {
-        // Reads the key per request so a key entered in settings applies at once.
-        TmdbClient(httpClient) { settings.currentApiKey() }
+        // Named rather than a trailing lambda: TmdbClient takes a baseUrl after
+        // the key provider, and trailing-lambda syntax would bind to that.
+        TmdbClient(
+            http = httpClient,
+            // Reads the key per request so a key entered in settings applies at once.
+            apiKeyProvider = { settings.currentApiKey() },
+        )
     }
 
     val repository: MovieRepository by lazy { MovieRepository(tmdbClient, settings) }
