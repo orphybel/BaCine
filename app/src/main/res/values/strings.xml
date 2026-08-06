@@ -6,6 +6,7 @@
     <!-- Navigation -->
     <string name="nav_home">Accueil</string>
     <string name="nav_catalog">Catalogue</string>
+    <string name="nav_watchlist">À voir</string>
     <string name="nav_search">Recherche</string>
     <string name="nav_settings">Réglages</string>
 
@@ -79,6 +80,14 @@
     <string name="onboarding_save">Enregistrer</string>
     <string name="onboarding_invalid">Cette clé n\'a pas été acceptée par TMDB. Vérifie-la et réessaie.</string>
     <string name="onboarding_checking">Vérification…</string>
+
+    <!-- Watchlist ("À voir") -->
+    <string name="watchlist_save">Ajouter à À voir</string>
+    <string name="watchlist_saved">Dans À voir</string>
+    <string name="watchlist_added">« %1$s » ajouté à À voir</string>
+    <string name="watchlist_removed">« %1$s » retiré de À voir</string>
+    <string name="watchlist_empty_title">Ta liste « À voir » est vide</string>
+    <string name="watchlist_empty_hint">Maintiens OK sur une affiche, n\'importe où dans l\'appli, pour l\'ajouter ici. Recommence pour la retirer.</string>
 
     <!-- Generic states -->
     <string name="state_loading">Chargement…</string>

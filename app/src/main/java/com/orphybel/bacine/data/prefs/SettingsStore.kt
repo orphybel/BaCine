@@ -10,6 +10,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.orphybel.bacine.BuildConfig
 import com.orphybel.bacine.data.remote.TmdbLocale
 import com.orphybel.bacine.domain.CatalogQuery
+import com.orphybel.bacine.domain.Movie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -58,6 +59,13 @@ class SettingsStore(context: Context) {
             ?: CatalogQuery.DEFAULT
     }
 
+    /** The "À voir" list, newest addition first. */
+    val watchlist: Flow<List<Movie>> = prefs.map { it.decodeWatchlist() }
+
+    /** Just the ids, for screens that only need to know whether a film is saved. */
+    val watchlistIds: Flow<Set<Int>> =
+        watchlist.map { list -> list.mapTo(LinkedHashSet(list.size)) { it.id } }
+
     /** One-shot read, for callers that cannot collect a flow (the HTTP client). */
     suspend fun currentApiKey(): String = prefs.first().resolveKey()
 
@@ -77,6 +85,44 @@ class SettingsStore(context: Context) {
         store.edit { it[KEY_CATALOG_QUERY] = json.encodeToString(query) }
     }
 
+    /**
+     * Adds [movie] to the watchlist if absent, removes it if present.
+     *
+     * The read and the write happen inside one [edit] transaction so two quick
+     * toggles cannot race and lose each other's change.
+     *
+     * @return true when the film is now saved, false when it was just removed —
+     *   so the caller can show the right confirmation.
+     */
+    suspend fun toggleWatchlist(movie: Movie): Boolean {
+        var added = false
+        store.edit { preferences ->
+            val current = preferences.decodeWatchlist()
+            val without = current.filterNot { it.id == movie.id }
+            val next = if (without.size != current.size) {
+                without
+            } else {
+                added = true
+                // Newest first, so the list reads as a stack of recent intents.
+                listOf(movie) + current
+            }
+            preferences[KEY_WATCHLIST] = json.encodeToString(next)
+        }
+        return added
+    }
+
+    suspend fun removeFromWatchlist(movieId: Int) {
+        store.edit { preferences ->
+            val next = preferences.decodeWatchlist().filterNot { it.id == movieId }
+            preferences[KEY_WATCHLIST] = json.encodeToString(next)
+        }
+    }
+
+    private fun Preferences.decodeWatchlist(): List<Movie> =
+        this[KEY_WATCHLIST]
+            ?.let { runCatching { json.decodeFromString<List<Movie>>(it) }.getOrNull() }
+            ?: emptyList()
+
     private fun Preferences.resolveKey(): String =
         this[KEY_API]?.takeIf { it.isNotBlank() } ?: BuildConfig.TMDB_API_KEY
 
@@ -88,5 +134,6 @@ class SettingsStore(context: Context) {
         val KEY_REGION = stringPreferencesKey("region")
         val KEY_LANGUAGE = stringPreferencesKey("language")
         val KEY_CATALOG_QUERY = stringPreferencesKey("catalog_query")
+        val KEY_WATCHLIST = stringPreferencesKey("watchlist")
     }
 }

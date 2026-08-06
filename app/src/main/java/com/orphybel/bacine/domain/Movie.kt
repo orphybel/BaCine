@@ -1,6 +1,15 @@
 package com.orphybel.bacine.domain
 
-/** A movie as shown in a row or a grid. */
+import kotlinx.serialization.Serializable
+
+/**
+ * A movie as shown in a row or a grid.
+ *
+ * Serializable so the watchlist can be persisted whole: storing the poster,
+ * title and rating alongside the id lets that screen render from disk without a
+ * network round-trip for every saved film.
+ */
+@Serializable
 data class Movie(
     val id: Int,
     val title: String,

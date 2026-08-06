@@ -90,4 +90,10 @@ object BaCineIcons {
         moveTo(6.4f, 8.6f); lineTo(12f, 14.2f); lineTo(17.6f, 8.6f)
         lineTo(19.7f, 10.7f); lineTo(12f, 18.4f); lineTo(4.3f, 10.7f); close()
     }
+
+    // A bookmark ribbon, notched at the bottom — the "À voir" list.
+    val Bookmark: ImageVector = icon("Bookmark") {
+        moveTo(6f, 2.5f); lineTo(18f, 2.5f); lineTo(18f, 21.5f); lineTo(12f, 16.5f)
+        lineTo(6f, 21.5f); close()
+    }
 }

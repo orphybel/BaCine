@@ -24,6 +24,7 @@ import com.orphybel.bacine.ui.components.MessageState
 import com.orphybel.bacine.ui.components.MovieRow
 import com.orphybel.bacine.ui.containerViewModel
 import com.orphybel.bacine.ui.theme.TvDimens
+import com.orphybel.bacine.ui.watchlist.rememberWatchlistToggle
 
 @Composable
 fun HomeScreen(
@@ -76,6 +77,7 @@ private fun HomeContentList(
     }
 
     val firstActionFocus = remember { FocusRequester() }
+    val onLongPress = rememberWatchlistToggle()
 
     // Park focus on the banner's trailer button so the remote has somewhere
     // sensible to start the moment the screen appears.
@@ -104,6 +106,7 @@ private fun HomeContentList(
                 movies = content.nowPlaying,
                 onMovieClick = onOpenMovie,
                 onLoadMore = { onLoadMore(HomeRow.NOW_PLAYING) },
+                onMovieLongClick = onLongPress,
             )
         }
 
@@ -113,6 +116,7 @@ private fun HomeContentList(
                 movies = content.vod,
                 onMovieClick = onOpenMovie,
                 onLoadMore = { onLoadMore(HomeRow.VOD) },
+                onMovieLongClick = onLongPress,
             )
         }
 
@@ -122,6 +126,7 @@ private fun HomeContentList(
                 movies = content.popular,
                 onMovieClick = onOpenMovie,
                 onLoadMore = { onLoadMore(HomeRow.POPULAR) },
+                onMovieLongClick = onLongPress,
             )
         }
 

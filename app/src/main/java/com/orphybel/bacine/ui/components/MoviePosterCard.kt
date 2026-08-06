@@ -42,12 +42,14 @@ fun MoviePosterCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester? = null,
+    onLongClick: (() -> Unit)? = null,
 ) {
     TvFocusable(
         onClick = onClick,
         modifier = modifier
             .then(focusRequester?.let { Modifier.focusRequester(it) } ?: Modifier),
         background = Surface2,
+        onLongClick = onLongClick,
     ) { focused ->
         Column(modifier = Modifier.fillMaxWidth()) {
             Box {

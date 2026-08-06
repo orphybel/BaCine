@@ -32,6 +32,7 @@ import com.orphybel.bacine.ui.components.LoadingState
 import com.orphybel.bacine.ui.components.MessageState
 import com.orphybel.bacine.ui.components.MoviePosterCard
 import com.orphybel.bacine.ui.containerViewModel
+import com.orphybel.bacine.ui.watchlist.rememberWatchlistToggle
 import com.orphybel.bacine.ui.theme.Gold
 import com.orphybel.bacine.ui.theme.Surface2
 import com.orphybel.bacine.ui.theme.TextPrimary
@@ -46,6 +47,7 @@ fun SearchScreen(
     val viewModel = containerViewModel(key = "search") { SearchViewModel(it.repository) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val fieldFocus = remember { FocusRequester() }
+    val onLongPress = rememberWatchlistToggle()
 
     // Land on the text field: on a TV the first thing the user wants is the
     // on-screen keyboard, not the empty result grid.
@@ -111,7 +113,11 @@ fun SearchScreen(
                     verticalArrangement = Arrangement.spacedBy(TvDimens.CardSpacing),
                 ) {
                     items(state.results, key = { it.id }) { movie ->
-                        MoviePosterCard(movie = movie, onClick = { onOpenMovie(movie) })
+                        MoviePosterCard(
+                            movie = movie,
+                            onClick = { onOpenMovie(movie) },
+                            onLongClick = { onLongPress(movie) },
+                        )
                     }
                 }
             }

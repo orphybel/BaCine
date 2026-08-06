@@ -32,6 +32,7 @@ import com.orphybel.bacine.ui.components.MoviePosterCard
 import com.orphybel.bacine.ui.containerViewModel
 import com.orphybel.bacine.ui.theme.TextPrimary
 import com.orphybel.bacine.ui.theme.TvDimens
+import com.orphybel.bacine.ui.watchlist.rememberWatchlistToggle
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
@@ -81,6 +82,7 @@ private fun CatalogGrid(
     modifier: Modifier = Modifier,
 ) {
     val gridState = rememberLazyGridState()
+    val onLongPress = rememberWatchlistToggle()
 
     LaunchedEffect(gridState, content.movies.size) {
         snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1 }
@@ -131,7 +133,11 @@ private fun CatalogGrid(
         items(content.movies, key = { it.id }) { movie ->
             // No explicit width: the tile takes the grid cell's width and
             // derives its poster height from the 2:3 aspect ratio.
-            MoviePosterCard(movie = movie, onClick = { onOpenMovie(movie) })
+            MoviePosterCard(
+                movie = movie,
+                onClick = { onOpenMovie(movie) },
+                onLongClick = { onLongPress(movie) },
+            )
         }
 
         item(key = "bottom", span = { GridItemSpan(maxLineSpan) }) {

@@ -18,6 +18,7 @@ import com.orphybel.bacine.ui.player.TrailerScreen
 import com.orphybel.bacine.ui.search.SearchScreen
 import com.orphybel.bacine.ui.settings.OnboardingScreen
 import com.orphybel.bacine.ui.settings.SettingsScreen
+import com.orphybel.bacine.ui.watchlist.WatchlistScreen
 
 @Composable
 fun BaCineNavHost(
@@ -78,6 +79,12 @@ fun BaCineNavHost(
                 CatalogScreen(
                     onOpenMovie = { navController.navigate(Routes.detail(it.id)) },
                     onMissingKey = { navController.navigate(Routes.ONBOARDING) },
+                )
+            }
+
+            composable(Routes.WATCHLIST) {
+                WatchlistScreen(
+                    onOpenMovie = { navController.navigate(Routes.detail(it.id)) },
                 )
             }
 

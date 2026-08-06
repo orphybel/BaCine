@@ -26,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +53,7 @@ import com.orphybel.bacine.ui.components.MessageState
 import com.orphybel.bacine.ui.components.NetworkImage
 import com.orphybel.bacine.ui.components.TvButton
 import com.orphybel.bacine.ui.components.TvTag
+import com.orphybel.bacine.ui.LocalAppContainer
 import com.orphybel.bacine.ui.containerViewModel
 import com.orphybel.bacine.ui.player.openInYouTube
 import com.orphybel.bacine.ui.theme.Gold
@@ -103,9 +106,14 @@ private fun DetailContent(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val container = LocalAppContainer.current
+    val scope = rememberCoroutineScope()
     val movie = details.movie
     val trailer = details.bestTrailer
     val trailerFocus = remember { FocusRequester() }
+
+    val watchIds by container.settings.watchlistIds.collectAsStateWithLifecycle(initialValue = emptySet())
+    val inWatchlist = movie.id in watchIds
 
     LaunchedEffect(movie.id) {
         runCatching { trailerFocus.requestFocus() }
@@ -203,6 +211,17 @@ private fun DetailContent(
                                     primary = false,
                                 )
                             }
+                            // The same toggle as a long press on a poster, but
+                            // discoverable — a plain button labelled with its
+                            // current state.
+                            TvButton(
+                                text = stringResource(
+                                    if (inWatchlist) R.string.watchlist_saved else R.string.watchlist_save,
+                                ),
+                                onClick = { scope.launch { container.settings.toggleWatchlist(movie) } },
+                                icon = BaCineIcons.Bookmark,
+                                primary = false,
+                            )
                         }
                         if (trailer == null) {
                             Text(

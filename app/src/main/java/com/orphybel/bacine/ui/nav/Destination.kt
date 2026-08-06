@@ -13,6 +13,7 @@ enum class Destination(
 ) {
     HOME(Routes.HOME, R.string.nav_home, BaCineIcons.Home),
     CATALOG(Routes.CATALOG, R.string.nav_catalog, BaCineIcons.Grid),
+    WATCHLIST(Routes.WATCHLIST, R.string.nav_watchlist, BaCineIcons.Bookmark),
     SEARCH(Routes.SEARCH, R.string.nav_search, BaCineIcons.Search),
     SETTINGS(Routes.SETTINGS, R.string.nav_settings, BaCineIcons.Settings),
 }
@@ -21,6 +22,7 @@ object Routes {
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
     const val CATALOG = "catalog"
+    const val WATCHLIST = "watchlist"
     const val SEARCH = "search"
     const val SETTINGS = "settings"
 
@@ -40,5 +42,5 @@ object Routes {
         if (videoKey.isNullOrBlank()) "trailer/$movieId" else "trailer/$movieId?$VIDEO_KEY_ARG=$videoKey"
 
     /** Routes that keep the navigation rail on screen. */
-    val TOP_LEVEL = setOf(HOME, CATALOG, SEARCH, SETTINGS)
+    val TOP_LEVEL = setOf(HOME, CATALOG, WATCHLIST, SEARCH, SETTINGS)
 }

@@ -37,6 +37,7 @@ fun MovieRow(
     modifier: Modifier = Modifier,
     onLoadMore: () -> Unit = {},
     firstItemFocusRequester: FocusRequester? = null,
+    onMovieLongClick: ((Movie) -> Unit)? = null,
 ) {
     if (movies.isEmpty()) return
 
@@ -76,6 +77,7 @@ fun MovieRow(
                     modifier = Modifier.width(TvDimens.PosterWidth),
                     focusRequester = firstItemFocusRequester
                         ?.takeIf { movie.id == movies.first().id },
+                    onLongClick = onMovieLongClick?.let { { it(movie) } },
                 )
             }
         }

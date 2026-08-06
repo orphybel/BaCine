@@ -2,9 +2,10 @@ package com.orphybel.bacine.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
@@ -31,9 +32,13 @@ import com.orphybel.bacine.ui.theme.Gold
  * and asks the enclosing scrollable to bring it into view, which is what makes
  * long rows navigable without any manual scroll handling.
  *
+ * @param onLongClick when set, a long press of the centre key fires it — the
+ *   D-pad's only secondary action. Posters use it to add to or remove from the
+ *   watchlist.
  * @param content receives whether it is currently focused, so callers can
  *   reveal extra detail (a title, a synopsis) only on the focused item.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TvFocusable(
     onClick: () -> Unit,
@@ -43,6 +48,7 @@ fun TvFocusable(
     scaleOnFocus: Float = 1.06f,
     borderWidth: Dp = 3.dp,
     background: Color = Color.Transparent,
+    onLongClick: (() -> Unit)? = null,
     content: @Composable BoxScope.(focused: Boolean) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -67,13 +73,14 @@ fun TvFocusable(
                 color = if (focused) Gold else Color.Transparent,
                 shape = shape,
             )
-            .clickable(
+            .combinedClickable(
                 interactionSource = interactionSource,
                 // The border and the lift are the focus affordance; a ripple
                 // adds nothing on a device with no touch input.
                 indication = null,
                 enabled = enabled,
                 onClick = onClick,
+                onLongClick = onLongClick,
             ),
     ) {
         content(focused)
