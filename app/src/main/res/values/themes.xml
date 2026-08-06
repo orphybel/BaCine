@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Compose draws everything; the platform theme only needs to avoid an action
+      bar and paint the window black so there is no white flash on a projector.
+    -->
+    <style name="Theme.BaCine" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/bacine_background</item>
+        <item name="android:colorBackground">@color/bacine_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+</resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- French is the default locale: the app targets French cinema listings. -->
+<resources>
+    <string name="app_name">BaCine</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Accueil</string>
+    <string name="nav_catalog">Catalogue</string>
+    <string name="nav_search">Recherche</string>
+    <string name="nav_settings">Réglages</string>
+
+    <!-- Home -->
+    <string name="row_now_playing">À l\'affiche au cinéma</string>
+    <string name="row_vod">Sorties récentes en VOD</string>
+    <string name="row_popular">Les plus populaires</string>
+    <string name="action_watch_trailer">Bande-annonce</string>
+    <string name="action_details">Voir la fiche</string>
+
+    <!-- Catalog -->
+    <string name="filter_sort">Trier par</string>
+    <string name="filter_genre">Genre</string>
+    <string name="filter_year">Année</string>
+    <string name="filter_rating">Note minimale</string>
+    <string name="filter_availability">Disponibilité</string>
+    <string name="filter_reset">Réinitialiser</string>
+    <string name="filter_all">Tous</string>
+
+    <string name="sort_popularity">Popularité</string>
+    <string name="sort_release_date">Date de sortie</string>
+    <string name="sort_rating">Note</string>
+    <string name="sort_title">Titre</string>
+
+    <string name="availability_any">Indifférent</string>
+    <string name="availability_theaters">En salle</string>
+    <string name="availability_rent">Location</string>
+    <string name="availability_buy">Achat</string>
+    <string name="availability_flatrate">Abonnement</string>
+
+    <!-- Detail -->
+    <string name="detail_synopsis">Synopsis</string>
+    <string name="detail_cast">Avec</string>
+    <string name="detail_no_synopsis">Aucun synopsis disponible pour ce film.</string>
+    <string name="detail_providers_rent">Disponible en location</string>
+    <string name="detail_providers_buy">Disponible à l\'achat</string>
+    <string name="detail_providers_flatrate">Inclus avec un abonnement</string>
+    <string name="detail_other_videos">Autres vidéos</string>
+    <string name="detail_runtime">%1$d min</string>
+    <string name="detail_no_trailer">Aucune bande-annonce trouvée</string>
+
+    <!-- Player -->
+    <string name="player_open_in_youtube">Ouvrir dans YouTube</string>
+    <string name="player_error">Impossible de lire la bande-annonce ici.</string>
+    <string name="player_error_hint">Le lecteur intégré n\'a pas pu démarrer. Essaie de l\'ouvrir dans l\'application YouTube.</string>
+    <string name="player_hint_controls">OK : lecture/pause · ◀ ▶ : ±10 s · Retour : quitter</string>
+    <string name="player_youtube_missing">Application YouTube introuvable sur cet appareil.</string>
+
+    <!-- Search -->
+    <string name="search_hint">Titre du film…</string>
+    <string name="search_empty">Saisis un titre pour lancer la recherche.</string>
+    <string name="search_no_result">Aucun film ne correspond à cette recherche.</string>
+
+    <!-- Settings / onboarding -->
+    <string name="settings_title">Réglages</string>
+    <string name="settings_api_key">Clé API TMDB</string>
+    <string name="settings_api_key_set">Clé enregistrée (%1$s)</string>
+    <string name="settings_api_key_from_build">Clé fournie par la compilation</string>
+    <string name="settings_api_key_none">Aucune clé enregistrée</string>
+    <string name="settings_change_key">Modifier la clé</string>
+    <string name="settings_region">Région</string>
+    <string name="settings_about">À propos</string>
+    <string name="settings_attribution">Ce produit utilise l\'API TMDB mais n\'est ni approuvé ni certifié par TMDB. Les disponibilités VOD sont fournies par JustWatch.</string>
+
+    <string name="onboarding_title">Bienvenue sur BaCine</string>
+    <string name="onboarding_body">Pour afficher les affiches et les bandes-annonces, BaCine a besoin d\'une clé API TMDB — elle est gratuite.\n\n1. Crée un compte sur themoviedb.org\n2. Va dans Paramètres puis API\n3. Copie la clé « API Key (v3 auth) »</string>
+    <string name="onboarding_field">Colle ta clé ici</string>
+    <string name="onboarding_save">Enregistrer</string>
+    <string name="onboarding_invalid">Cette clé n\'a pas été acceptée par TMDB. Vérifie-la et réessaie.</string>
+    <string name="onboarding_checking">Vérification…</string>
+
+    <!-- Generic states -->
+    <string name="state_loading">Chargement…</string>
+    <string name="state_error">Un problème est survenu.</string>
+    <string name="state_retry">Réessayer</string>
+    <string name="action_back">Retour</string>
+    <string name="state_empty">Rien à afficher ici.</string>
+    <string name="cd_poster">Affiche de %1$s</string>
+</resources>

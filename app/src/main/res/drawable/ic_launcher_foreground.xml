@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive icon foreground. The mark stays inside the central 72dp safe zone so
+  no launcher mask can clip it.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Gold ring -->
+    <path
+        android:fillColor="#E8B33C"
+        android:pathData="M54,28 a26,26 0 1,0 0.1,0 z" />
+    <!-- Punched out with the icon background colour -->
+    <path
+        android:fillColor="#06070B"
+        android:pathData="M54,34 a20,20 0 1,0 0.1,0 z" />
+    <!-- Play mark -->
+    <path
+        android:fillColor="#E8B33C"
+        android:pathData="M48,43 L48,65 L66,54 z" />
+</vector>
