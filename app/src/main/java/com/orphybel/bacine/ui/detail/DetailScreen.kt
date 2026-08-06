@@ -52,6 +52,7 @@ import com.orphybel.bacine.ui.components.LoadingState
 import com.orphybel.bacine.ui.components.MessageState
 import com.orphybel.bacine.ui.components.NetworkImage
 import com.orphybel.bacine.ui.components.TvButton
+import com.orphybel.bacine.ui.components.TvFocusable
 import com.orphybel.bacine.ui.components.TvTag
 import com.orphybel.bacine.ui.LocalAppContainer
 import com.orphybel.bacine.ui.containerViewModel
@@ -340,19 +341,36 @@ private fun MetaLine(details: MovieDetails) {
 
 @Composable
 private fun ProviderSection(details: MovieDetails) {
+    val title = details.movie.title
+    val link = details.providers.link
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        ProviderRow(stringResource(R.string.detail_providers_rent), details.providers.rent)
-        ProviderRow(stringResource(R.string.detail_providers_buy), details.providers.buy)
+        ProviderRow(stringResource(R.string.detail_providers_rent), details.providers.rent, title, link)
+        ProviderRow(stringResource(R.string.detail_providers_buy), details.providers.buy, title, link)
         ProviderRow(
             stringResource(R.string.detail_providers_flatrate),
             details.providers.flatrate,
+            title,
+            link,
+        )
+        Text(
+            text = stringResource(R.string.detail_providers_hint),
+            style = MaterialTheme.typography.labelMedium,
+            color = TextSecondary,
+            modifier = Modifier.padding(horizontal = TvDimens.ScreenPaddingHorizontal),
         )
     }
 }
 
 @Composable
-private fun ProviderRow(title: String, providers: List<Provider>) {
+private fun ProviderRow(
+    title: String,
+    providers: List<Provider>,
+    movieTitle: String,
+    justWatchLink: String?,
+) {
     if (providers.isEmpty()) return
+
+    val context = LocalContext.current
 
     Section(title = title) {
         LazyRow(
@@ -360,25 +378,40 @@ private fun ProviderRow(title: String, providers: List<Provider>) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(providers, key = { it.id }) { provider ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier
-                        .background(Surface2, RoundedCornerShape(10.dp))
-                        .padding(10.dp),
-                ) {
-                    NetworkImage(
-                        url = TmdbImages.logo(provider.logoPath),
-                        contentDescription = null,
-                        modifier = Modifier.size(36.dp).clip(RoundedCornerShape(8.dp)),
-                        contentScale = ContentScale.Fit,
-                        placeholder = Color.Transparent,
-                    )
-                    Text(
-                        text = provider.name,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = TextPrimary,
-                    )
+                TvFocusable(
+                    onClick = {
+                        val message = when (openProvider(context, provider, movieTitle, justWatchLink)) {
+                            ProviderOpenResult.APP ->
+                                context.getString(R.string.provider_opening, provider.name)
+                            ProviderOpenResult.WEB ->
+                                context.getString(R.string.provider_opening_web)
+                            ProviderOpenResult.NONE ->
+                                context.getString(R.string.provider_open_failed, provider.name)
+                        }
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    scaleOnFocus = 1.06f,
+                    background = Surface2,
+                ) { _ ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier.padding(10.dp),
+                    ) {
+                        NetworkImage(
+                            url = TmdbImages.logo(provider.logoPath),
+                            contentDescription = null,
+                            modifier = Modifier.size(36.dp).clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Fit,
+                            placeholder = Color.Transparent,
+                        )
+                        Text(
+                            text = provider.name,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TextPrimary,
+                        )
+                    }
                 }
             }
         }

@@ -76,7 +76,7 @@ fun openInYouTube(context: Context, videoKey: String): Boolean {
 }
 
 /** Unwraps the Activity a Compose context is hosted in, or null if there is none. */
-private fun Context.findActivity(): Activity? {
+internal fun Context.findActivity(): Activity? {
     var current: Context? = this
     while (current is ContextWrapper) {
         if (current is Activity) return current

@@ -48,6 +48,10 @@
     <string name="detail_other_videos">Autres vidéos</string>
     <string name="detail_runtime">%1$d min</string>
     <string name="detail_no_trailer">Aucune bande-annonce trouvée</string>
+    <string name="detail_providers_hint">Sélectionne une plateforme pour l\'ouvrir sur ce film.</string>
+    <string name="provider_opening">Ouverture de %1$s…</string>
+    <string name="provider_opening_web">Ouverture de la page « Où regarder »…</string>
+    <string name="provider_open_failed">Impossible d\'ouvrir un lien pour %1$s</string>
 
     <!-- Player -->
     <string name="player_open_in_youtube">Ouvrir dans YouTube</string>
