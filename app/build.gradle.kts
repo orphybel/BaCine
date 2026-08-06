@@ -69,6 +69,10 @@ android {
         // (a broken TV manifest, for instance) still fail the build.
         warningsAsErrors = false
         abortOnError = true
+        // Print findings into the build log. Without this the only record is a
+        // file inside build/, which is useless when reading CI output — the
+        // failure message just points at a path that no longer exists.
+        textReport = true
         disable += "MissingTranslation"
     }
 }

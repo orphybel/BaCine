@@ -30,17 +30,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Unit tests
-        run: ./gradlew testDebugUnitTest --stacktrace
-
-      - name: Lint
-        run: ./gradlew lintDebug --stacktrace
+        run: ./gradlew testDebugUnitTest
 
       - name: Build debug APK
-        # The secret is optional. Without it the build still succeeds and the
-        # app asks for a TMDB key on first launch.
+        # Built before lint so a style regression never costs you an installable
+        # APK. The secret is optional: without it the build still succeeds and
+        # the app asks for a TMDB key on first launch.
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug
 
       - name: Rename APK
         run: |
@@ -53,6 +51,11 @@ jobs:
           name: BaCine-debug-apk
           path: dist/BaCine-debug.apk
           if-no-files-found: error
+
+      - name: Lint
+        # No --stacktrace: Gradle interleaves the exception dump with lint's own
+        # output, which buries the findings we actually need to read.
+        run: ./gradlew lintDebug
 
       - name: Upload test and lint reports on failure
         if: failure()
