@@ -46,15 +46,27 @@ fun openProvider(
 
     if (target != null) {
         val url = Uri.parse(target.url(query))
+
+        // 1) Known packages: try the search URL, then the app's own launcher.
         for (pkg in target.packages) {
             val launcher = context.launcherIntentFor(pkg) ?: continue // not installed
-            // Prefer the search URL; some apps open their search from it.
             if (context.launch(Intent(Intent.ACTION_VIEW, url).setPackage(pkg))) {
                 return ProviderOpenResult.APP
             }
-            // Installed but it ignored the link: open the app anyway, so the
-            // user is at least in the right place rather than on a web page.
             if (context.launch(launcher)) return ProviderOpenResult.APP
+        }
+
+        // 2) Package guesses missed the installed app — ask the system which
+        // installed, non-browser app claims this provider's domain, and open
+        // that. This is what catches apps whose package name differs on this
+        // device (a regional build, or HBO Max vs Max) without hard-coding it.
+        val handler = context.nonBrowserHandlerOf(url)
+        if (handler != null) {
+            if (context.launch(Intent(Intent.ACTION_VIEW, url).setPackage(handler))) {
+                return ProviderOpenResult.APP
+            }
+            val launcher = context.launcherIntentFor(handler)
+            if (launcher != null && context.launch(launcher)) return ProviderOpenResult.APP
         }
     }
 
@@ -69,6 +81,23 @@ fun openProvider(
 /** The app's launcher intent, or null when the package is not installed. */
 private fun Context.launcherIntentFor(pkg: String): Intent? =
     runCatching { packageManager.getLaunchIntentForPackage(pkg) }.getOrNull()
+
+/**
+ * The package of an installed app — not a browser — that handles [uri], or null.
+ *
+ * Providers register their web domains, so this finds the streaming app without
+ * knowing its package name. Browsers are excluded by probing a throwaway URL:
+ * anything that also handles that is a general browser, not the provider.
+ */
+private fun Context.nonBrowserHandlerOf(uri: Uri): String? {
+    val browsers = handlersOf(Uri.parse("https://example.com"))
+    return handlersOf(uri).firstOrNull { it !in browsers }
+}
+
+@Suppress("DEPRECATION", "QueryPermissionsNeeded")
+private fun Context.handlersOf(uri: Uri): Set<String> =
+    packageManager.queryIntentActivities(Intent(Intent.ACTION_VIEW, uri), 0)
+        .mapTo(mutableSetOf()) { it.activityInfo.packageName }
 
 /**
  * Starts [intent] if something can handle it.
@@ -90,16 +119,26 @@ private class ProviderTarget(
 )
 
 private val primeVideo = ProviderTarget(
-    listOf("com.amazon.amazonvideo.livingroom", "com.amazon.avod.thirdpartyclient"),
-) { "https://www.primevideo.com/search?phrase=$it" }
+    listOf(
+        "com.amazon.amazonvideo.livingroom",
+        "com.amazon.avod.thirdpartyclient",
+        "com.amazon.avod",
+    ),
+) { "https://www.primevideo.com/search/ref=atv_nb_sug?phrase=$it" }
 
+// Max, and the HBO Max app it replaced (still installed under the old package
+// on many devices).
 private val max = ProviderTarget(
-    listOf("com.wbd.stream"),
+    listOf("com.wbd.stream", "com.hbo.hbonow"),
 ) { "https://play.max.com/search?q=$it" }
 
 private val appleTv = ProviderTarget(
     listOf("com.apple.atve.androidtv.appletv", "com.apple.atve.amazon.appletv"),
 ) { "https://tv.apple.com/search?term=$it" }
+
+private val paramount = ProviderTarget(
+    listOf("com.cbs.ott", "com.paramount.pplus.intl"),
+) { "https://www.paramountplus.com/search/?query=$it" }
 
 /**
  * TMDB watch-provider ids mapped to how to open their app on a title search.
@@ -121,6 +160,6 @@ private val PROVIDER_TARGETS: Map<Int, ProviderTarget> = mapOf(
     // Apple TV store and Apple TV+.
     2 to appleTv,
     350 to appleTv,
-    531 to ProviderTarget(listOf("com.cbs.ott")) { "https://www.paramountplus.com/search/?query=$it" },
+    531 to paramount,
     283 to ProviderTarget(listOf("com.crunchyroll.crunchyroid")) { "https://www.crunchyroll.com/search?q=$it" },
 )

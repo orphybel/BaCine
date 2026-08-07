@@ -55,11 +55,14 @@
         <package android:name="com.netflix.ninja" />
         <package android:name="com.amazon.amazonvideo.livingroom" />
         <package android:name="com.amazon.avod.thirdpartyclient" />
+        <package android:name="com.amazon.avod" />
         <package android:name="com.disney.disneyplus" />
         <package android:name="com.wbd.stream" />
+        <package android:name="com.hbo.hbonow" />
         <package android:name="com.apple.atve.androidtv.appletv" />
         <package android:name="com.apple.atve.amazon.appletv" />
         <package android:name="com.cbs.ott" />
+        <package android:name="com.paramount.pplus.intl" />
         <package android:name="com.crunchyroll.crunchyroid" />
 
         <!-- A browser for the "where to watch" fallback when no app is installed. -->
