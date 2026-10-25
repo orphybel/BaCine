@@ -65,10 +65,14 @@ fun TvButton(
                     modifier = Modifier.size(20.dp),
                 )
             }
+            // A label never wraps: squeezed by a crowded row, a wrapping label
+            // folds one letter per line into a tall sliver of a button.
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelLarge,
                 color = contentColor,
+                maxLines = 1,
+                softWrap = false,
             )
         }
     }

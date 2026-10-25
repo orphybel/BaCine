@@ -52,7 +52,8 @@
     <string name="provider_opening">Ouverture de %1$s…</string>
     <string name="provider_opening_web">Ouverture de la page « Où regarder »…</string>
     <string name="provider_open_failed">Impossible d\'ouvrir un lien pour %1$s</string>
-    <string name="action_search_in_kodi">Chercher dans Kodi</string>
+    <!-- Kept short: it is the fourth button on the detail screen's action row. -->
+    <string name="action_search_in_kodi">Kodi</string>
     <string name="kodi_opening">Recherche de « %1$s » dans Kodi…</string>
     <string name="kodi_open_failed">Impossible d\'ouvrir Kodi.</string>
 

@@ -79,7 +79,7 @@ tmdb.apiKey=votre_cle_ici
 ## Recherche dans Kodi (vStream)
 
 Si **Kodi** est installé sur l'appareil, la fiche film affiche un bouton
-**« Chercher dans Kodi »**. Il ouvre Kodi directement sur la recherche globale
+**« Kodi »** (icône loupe). Il ouvre Kodi directement sur la recherche globale
 de l'add-on **vStream**, catégorie Films, avec le titre du film.
 
 Kodi ne sait pas ouvrir un dossier d'add-on depuis une autre application : tout
