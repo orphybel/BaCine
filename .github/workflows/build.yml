@@ -52,6 +52,20 @@ jobs:
           path: dist/BaCine-debug.apk
           if-no-files-found: error
 
+      - name: Package Kodi bridge add-on
+        # Kodi expects the add-on folder at the root of the zip, and the
+        # version in the file name is what users tell releases apart by.
+        run: |
+          version=$(sed -n 's/.*<addon [^>]*version="\([^"]*\)".*/\1/p' kodi/plugin.video.bacine/addon.xml)
+          (cd kodi && zip -r "../dist/plugin.video.bacine-$version.zip" plugin.video.bacine -x '*/__pycache__/*')
+
+      - name: Upload Kodi add-on artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin.video.bacine
+          path: dist/plugin.video.bacine-*.zip
+          if-no-files-found: error
+
       - name: Lint
         # No --stacktrace: Gradle interleaves the exception dump with lint's own
         # output, which buries the findings we actually need to read.
@@ -71,5 +85,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/BaCine-debug.apk
+          files: |
+            dist/BaCine-debug.apk
+            dist/plugin.video.bacine-*.zip
           generate_release_notes: true

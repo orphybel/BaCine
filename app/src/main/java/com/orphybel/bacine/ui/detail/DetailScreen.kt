@@ -115,6 +115,7 @@ private fun DetailContent(
 
     val watchIds by container.settings.watchlistIds.collectAsStateWithLifecycle(initialValue = emptySet())
     val inWatchlist = movie.id in watchIds
+    val kodiInstalled = remember { isKodiInstalled(context) }
 
     LaunchedEffect(movie.id) {
         runCatching { trailerFocus.requestFocus() }
@@ -223,6 +224,23 @@ private fun DetailContent(
                                 icon = BaCineIcons.Bookmark,
                                 primary = false,
                             )
+                            // Only shown when Kodi is installed: the bridge
+                            // add-on inside it hands the title to vStream.
+                            if (kodiInstalled) {
+                                TvButton(
+                                    text = stringResource(R.string.action_search_in_kodi),
+                                    onClick = {
+                                        val message = if (searchInKodi(context, movie.title)) {
+                                            context.getString(R.string.kodi_opening, movie.title)
+                                        } else {
+                                            context.getString(R.string.kodi_open_failed)
+                                        }
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                    },
+                                    icon = BaCineIcons.Search,
+                                    primary = false,
+                                )
+                            }
                         }
                         if (trailer == null) {
                             Text(

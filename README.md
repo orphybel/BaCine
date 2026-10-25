@@ -76,6 +76,29 @@ En développement local, la clé peut aussi être placée dans `local.properties
 tmdb.apiKey=votre_cle_ici
 ```
 
+## Recherche dans Kodi (vStream)
+
+Si **Kodi** est installé sur l'appareil, la fiche film affiche un bouton
+**« Chercher dans Kodi »**. Il ouvre Kodi directement sur la recherche globale
+de l'add-on **vStream**, catégorie Films, avec le titre du film.
+
+Kodi ne sait pas ouvrir un dossier d'add-on depuis une autre application : tout
+lien reçu de l'extérieur est traité comme une demande de lecture. Le bouton
+passe donc par un petit add-on Kodi, **BaCine** (`plugin.video.bacine`, dans
+[`kodi/`](kodi/plugin.video.bacine)), qui reçoit le titre et ouvre la recherche
+vStream à sa place. vStream lui-même n'est pas modifié : ses mises à jour
+automatiques continuent de s'appliquer normalement.
+
+Installation de la passerelle, une fois :
+
+1. Télécharger `plugin.video.bacine-<version>.zip` depuis la release (ou
+   l'artefact de build) et le copier sur l'appareil.
+2. Dans Kodi : **Add-ons → Installer depuis un fichier zip**, choisir le zip.
+   Si Kodi le refuse, autoriser d'abord **Paramètres → Système → Add-ons →
+   Sources inconnues** (déjà le cas si vStream est installé).
+
+Sans vStream, la passerelle affiche simplement une notification dans Kodi.
+
 ## Compilation locale
 
 Il faut un JDK 17 et le SDK Android (API 35).
