@@ -24,7 +24,9 @@ jobs:
           java-version: "17"
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        # v4.0.2+: v3 still installs the `tools` package, which Google removed
+        # from the SDK repository, and fails before anything is built.
+        uses: android-actions/setup-android@v4
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
